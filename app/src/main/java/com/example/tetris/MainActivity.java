@@ -1,6 +1,7 @@
 package com.example.tetris;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,8 +13,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
-
+    GameActivity gameActivity;
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -23,10 +25,14 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        gameActivity = findViewById(R.id.mainFrame);
     }
 
 
     public void onClick(View v) {
+        Log.d("myLog", "HERE0");
         Button b = ((Button)v);
+        //gameActivity.invalidate();
     }
 }

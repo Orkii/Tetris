@@ -66,14 +66,17 @@
         app:layout_constraintEnd_toStartOf="@+id/bRotateR"
         app:layout_constraintStart_toEndOf="@+id/bMoveR" />
 
-    <FrameLayout
+    <com.example.tetris.GameActivity
         android:id="@+id/mainFrame"
         android:layout_width="300dp"
         android:layout_height="400dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="48dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent">
+
+    </com.example.tetris.GameActivity>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
