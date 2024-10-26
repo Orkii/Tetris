@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/bRotateR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="1dp"
+        android:text="↻"
+        android:textSize="18pt"
+        app:layout_constraintBaseline_toBaselineOf="@+id/bRotateL"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bRotateL" />
+
+    <Button
+        android:id="@+id/bMoveR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="1dp"
+        android:gravity="top"
+        android:text=""
+        android:textAllCaps="false"
+        android:textSize="18pt"
+        app:layout_constraintEnd_toStartOf="@+id/bRotateL"
+        app:layout_constraintStart_toEndOf="@+id/bMoveL"
+        app:layout_constraintTop_toTopOf="@+id/bRotateL" />
+
+    <Button
+        android:id="@+id/bDrop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="39dp"
+        android:layout_marginBottom="13dp"
+        android:text="↓"
+        android:textSize="18pt"
+        app:layout_constraintBottom_toTopOf="@+id/bRotateR"
+        app:layout_constraintEnd_toEndOf="@+id/bRotateR" />
+
+    <Button
+        android:id="@+id/bMoveL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClick"
+        android:text=""
+        android:textSize="18pt"
+        app:layout_constraintBaseline_toBaselineOf="@+id/bMoveR"
+        app:layout_constraintEnd_toStartOf="@+id/bMoveR"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/bRotateL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="36dp"
+        android:text="↺"
+        android:textSize="18pt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/bRotateR"
+        app:layout_constraintStart_toEndOf="@+id/bMoveR" />
+
+    <FrameLayout
+        android:id="@+id/mainFrame"
+        android:layout_width="300dp"
+        android:layout_height="400dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
