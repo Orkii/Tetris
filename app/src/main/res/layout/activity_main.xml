@@ -35,12 +35,16 @@
         android:id="@+id/bDrop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="39dp"
-        android:layout_marginBottom="13dp"
+        android:layout_marginStart="285dp"
+        android:layout_marginTop="525dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="16dp"
         android:text="↓"
         android:textSize="18pt"
         app:layout_constraintBottom_toTopOf="@+id/bRotateR"
-        app:layout_constraintEnd_toEndOf="@+id/bRotateR" />
+        app:layout_constraintEnd_toEndOf="@+id/bRotateR"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/bMoveL"
@@ -68,11 +72,11 @@
 
     <com.example.tetris.GameActivity
         android:id="@+id/mainFrame"
-        android:layout_width="300dp"
-        android:layout_height="400dp"
-        android:layout_marginTop="48dp"
+        android:layout_width="250dp"
+        android:layout_height="500dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
