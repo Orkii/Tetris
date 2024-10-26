@@ -25,8 +25,36 @@ public class GameActivity extends View {
     private PairF GAME_SCREEN_SIZE = new PairF(-1,-1);
     private PairF CELL_SIZE = new PairF(-1,-1);
 
-    private boolean[][] field = new boolean[GAME_FIELD_SIZE.y][GAME_FIELD_SIZE.x];
+
     private TetrisFigure nowFall;
+
+    private char lastMove = '0';    // qe - вращение
+                                    // ad - движение
+
+    private static final Boolean _ = false;
+    private static final Boolean A = true;
+    //private boolean[][] field = new boolean[GAME_FIELD_SIZE.y][GAME_FIELD_SIZE.x] {
+    private boolean[][] field = new boolean[][] {
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
+        {_,_,_,_,A,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_}};
 
     public GameActivity(Context context) {
         super(context);
@@ -54,7 +82,7 @@ public class GameActivity extends View {
         INNER_BORDER_COLOR.setColor(Color.GRAY);
         CELL_COLOR.setColor(Color.GREEN);
 
-        nowFall= new TetrisFigure('T');
+        nowFall = new TetrisFigure('T');
     }
 
 
@@ -75,6 +103,81 @@ public class GameActivity extends View {
         drawCell(canvas);
         drawLines(canvas);
         Log.d("myLog", "HERE2");
+    }
+
+    protected boolean checkCollision(){
+        int a = field[0].length;
+        int b = nowFall.rightestPos();
+        if (nowFall.leftestPos() < 0) {
+            unDo(); // Вышел влево
+            return false;
+        }
+        if (nowFall.rightestPos() >= field[0].length) {
+            unDo();  // Вышел вправо
+            return false;
+        }
+
+        for (int i = 0; i < nowFall.FIGURE_FIELD_SIZE.y; i++) {
+            for (int j = 0; j < nowFall.FIGURE_FIELD_SIZE.x; j++) {
+                if (nowFall.figureField[i][j] &&
+                    field[i + nowFall.position.y][j + nowFall.position.x]){
+                    unDo();
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+    protected void unDo(){
+        if (lastMove == 'q')      hardInputRotateR();
+        else if (lastMove == 'e') hardInputRotateL();
+        else if (lastMove == 'a') hardInputMoveR();
+        else if (lastMove == 'd') hardInputMoveL();
+    }
+
+
+    public void inputDrop(){
+        nowFall.drop();
+        Log.d("myLog", nowFall.position.toString());
+        checkCollision();
+    }
+    public void inputRotateR(){
+        lastMove = 'e';
+        nowFall.rotateR();
+        checkCollision();
+    }
+    public void inputRotateL(){
+        lastMove = 'q';
+        nowFall.rotateL();
+        checkCollision();
+    }
+    public void inputMoveR(){
+        lastMove = 'd';
+        nowFall.moveR();
+        checkCollision();
+    }
+    public void inputMoveL(){
+        lastMove = 'a';
+        nowFall.moveL();
+        checkCollision();
+    }
+
+    protected void hardInputDrop(){
+        nowFall.drop();
+        Log.d("myLog", nowFall.position.toString());
+    }
+    protected void hardInputRotateR(){
+        nowFall.rotateR();
+    }
+    protected void hardInputRotateL(){
+        nowFall.rotateL();
+    }
+    protected void hardInputMoveR(){
+        nowFall.moveR();
+    }
+    protected void hardInputMoveL(){
+        nowFall.moveL();
     }
 
     protected void drawBorder (@NonNull Canvas canvas){
@@ -102,39 +205,30 @@ public class GameActivity extends View {
     }
     protected void drawCell (@NonNull Canvas canvas){
 
-        Random rnd = new Random();
         for (int i = 0; i < nowFall.FIGURE_FIELD_SIZE.y; i++) {
             for (int j = 0; j < nowFall.FIGURE_FIELD_SIZE.x; j++) {
                 if (nowFall.figureField[i][j] == true){
+
                     canvas.drawRect(
                             BORDER_WIDTH +     (nowFall.position.x + j)*CELL_SIZE.x,
                             BORDER_WIDTH +      (nowFall.position.y + i)*CELL_SIZE.y,
                             BORDER_WIDTH +    (nowFall.position.x + j)*CELL_SIZE.x + CELL_SIZE.x,
                             BORDER_WIDTH +   (nowFall.position.y + i)*CELL_SIZE.y + CELL_SIZE.y, CELL_COLOR);
                 }
-
-
             }
         }
 
-/*
-        for (int i = 0; i < GAME_FIELD_SIZE.x; i++){
-            for (int j = 0; j < GAME_FIELD_SIZE.y; j++){
-
-                int a = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-
-                Paint pa = new Paint();
-                pa.setColor(a);
-
-                Log.d("myLog", "COLOR = " + a);
-
-                canvas.drawRect(BORDER_WIDTH + i*CELL_SIZE.x,
-                                BORDER_WIDTH + j*CELL_SIZE.y,
-                                BORDER_WIDTH + i*CELL_SIZE.x + CELL_SIZE.x,
-                                BORDER_WIDTH + j*CELL_SIZE.y + CELL_SIZE.y, pa);
+        for (int i = 0; i < GAME_FIELD_SIZE.x; i++) {
+            for (int j = 0; j < GAME_FIELD_SIZE.y; j++) {
+                if (field[j][i] == true){
+                    canvas.drawRect(
+                            BORDER_WIDTH +     i * CELL_SIZE.x,
+                            BORDER_WIDTH +      j * CELL_SIZE.y,
+                            BORDER_WIDTH +    i * CELL_SIZE.x + CELL_SIZE.x,
+                            BORDER_WIDTH +   j * CELL_SIZE.y + CELL_SIZE.y, CELL_COLOR);
+                }
             }
         }
-*/
 
     }
 }

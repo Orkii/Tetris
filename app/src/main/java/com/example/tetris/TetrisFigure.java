@@ -1,7 +1,9 @@
 package com.example.tetris;
 
+import androidx.annotation.NonNull;
+
 public class TetrisFigure {                 // T J L Z S I O
-    public static final Pair FIGURE_FIELD_SIZE = new Pair(5,5);
+    public Pair FIGURE_FIELD_SIZE = new Pair(5,5);
     public boolean[][] figureField;// = new boolean[GAME_FIELD_SIZE.y][GAME_FIELD_SIZE.x];
 
 
@@ -68,4 +70,56 @@ public class TetrisFigure {                 // T J L Z S I O
                     {_,_,_,_,_}};
         }
     }
+
+
+    public void rotateR(){
+        boolean[][] rotated = new boolean[FIGURE_FIELD_SIZE.y][FIGURE_FIELD_SIZE.x];
+        for (int i = 0; i < FIGURE_FIELD_SIZE.x; i++)
+            for (int j = 0; j < FIGURE_FIELD_SIZE.y; j++)
+                rotated[j][i] = figureField[FIGURE_FIELD_SIZE.x-i-1][j];
+
+        int temp = FIGURE_FIELD_SIZE.x;
+        FIGURE_FIELD_SIZE.x = FIGURE_FIELD_SIZE.y;
+        FIGURE_FIELD_SIZE.y = temp;
+        figureField = rotated;
+
+    }
+    public void rotateL(){
+        rotateR();
+        rotateR();
+        rotateR();
+    }
+    public void moveR(){
+        position.x++;
+    }
+    public void moveL(){
+        position.x--;
+    }
+    public void drop(){
+        position.y++;
+    }
+
+    public int leftestPos() {
+        for (int i = 0; i < FIGURE_FIELD_SIZE.x; i++){
+            for (int j = 0; j < FIGURE_FIELD_SIZE.y; j++){
+                if (figureField[j][i]){
+                    return (i + position.x);
+                }
+            }
+        }
+        return -1;
+        //throw new Exception("?");
+    }
+    public int rightestPos() {
+        for (int i = FIGURE_FIELD_SIZE.x - 1; i > 0; i--){
+            for (int j = 0; j < FIGURE_FIELD_SIZE.y; j++){
+                if (figureField[j][i]){
+                    return (i + position.x);
+                }
+            }
+        }
+        return -1;
+        //throw new Exception("?");
+    }
+
 }

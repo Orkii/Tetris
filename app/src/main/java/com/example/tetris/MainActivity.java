@@ -35,4 +35,30 @@ public class MainActivity extends AppCompatActivity {
         Button b = ((Button)v);
         //gameActivity.invalidate();
     }
+    public void onClickDrop(View v) {
+        Log.d("myLog", "Drop Button");
+        gameActivity.inputDrop();
+        gameActivity.invalidate();
+    }
+    public void onClickRotateR(View v) {
+        Log.d("myLog", "Drop Button");
+        gameActivity.inputRotateR();
+        gameActivity.invalidate();
+    }
+    public void onClickRotateL(View v) {
+        Log.d("myLog", "Drop Button");
+        gameActivity.inputRotateL();
+        gameActivity.invalidate();
+    }
+
+    public void onClickMoveR(View v) {
+        Log.d("myLog", "Drop Button");
+        gameActivity.inputMoveR();
+        gameActivity.invalidate();
+    }
+    public void onClickMoveL(View v) {
+        Log.d("myLog", "Drop Button");
+        gameActivity.inputMoveL();
+        gameActivity.invalidate();
+    }
 }
