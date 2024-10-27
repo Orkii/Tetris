@@ -14,6 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class GameActivity extends View {
     private static final float BORDER_WIDTH = 5;
@@ -25,11 +28,17 @@ public class GameActivity extends View {
     private PairF GAME_SCREEN_SIZE = new PairF(-1,-1);
     private PairF CELL_SIZE = new PairF(-1,-1);
 
+    private char[] figureType = new char[] {'T', 'J', 'L', 'Z', 'S', 'I', 'O'};
+
+    private int msToFall = 200;
 
     private TetrisFigure nowFall;
 
     private char lastMove = '0';    // qe - вращение
                                     // ad - движение
+                                    // f  - падение по времени
+
+    Random random = new Random();
 
     private static final Boolean _ = false;
     private static final Boolean A = true;
@@ -53,7 +62,7 @@ public class GameActivity extends View {
         {_,_,_,_,_,_,_,_,_,_},
         {_,_,_,_,_,_,_,_,_,_},
         {_,_,_,_,_,_,_,_,_,_},
-        {_,_,_,_,A,_,_,_,_,_},
+        {_,_,_,_,_,_,_,_,_,_},
         {_,_,_,_,_,_,_,_,_,_}};
 
     public GameActivity(Context context) {
@@ -105,6 +114,36 @@ public class GameActivity extends View {
         Log.d("myLog", "HERE2");
     }
 
+
+    void tick(){
+        nowFall.drop();
+        lastMove = 'f';
+        checkCollision();
+        invalidate();
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        service.schedule(new Runnable() {
+            @Override
+            public void run() {
+                tick();
+            }
+        }, msToFall, TimeUnit.MILLISECONDS);
+        service.shutdown();
+    }
+
+    public void start(){
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        service.schedule(new Runnable() {
+            @Override
+            public void run() {
+                tick();
+            }
+        }, msToFall, TimeUnit.MILLISECONDS);
+        service.shutdown();
+
+    }
+
+
+
     protected boolean checkCollision(){
         int a = field[0].length;
         int b = nowFall.rightestPos();
@@ -112,8 +151,14 @@ public class GameActivity extends View {
             unDo(); // Вышел влево
             return false;
         }
-        if (nowFall.rightestPos() >= field[0].length) {
+        if (nowFall.rightestPos() >= GAME_FIELD_SIZE.x) {
             unDo();  // Вышел вправо
+            return false;
+        }
+        if (nowFall.lowestPos() >= GAME_FIELD_SIZE.y) {
+            unDo();
+            //putNowFallToField();
+            //createNewFigure();
             return false;
         }
 
@@ -134,9 +179,57 @@ public class GameActivity extends View {
         else if (lastMove == 'e') hardInputRotateL();
         else if (lastMove == 'a') hardInputMoveR();
         else if (lastMove == 'd') hardInputMoveL();
+        else if (lastMove == 'f') {
+            nowFall.position.y--;
+            putNowFallToField();
+            checkLines();
+            createNewFigure();
+        }
+    }
+
+    protected void checkLines(){
+        for (int i = 0; i < GAME_FIELD_SIZE.y; i++) {
+            boolean full = true;
+            for (int j = 0; j < GAME_FIELD_SIZE.x; j++) {
+                if (!field[i][j]){
+                    full = false;
+                    break;
+                }
+            }
+            if (full){
+
+                for (int k = i - 1; k > 0 ; k--){
+                    for (int l = 0; l < GAME_FIELD_SIZE.x; l++) {
+                        field[k+1][l] = field[k][l];
+                    }
+                }
+                for (int l = 0; l < GAME_FIELD_SIZE.x; l++) {
+                    field[0][l] = field[0][l];
+                }
+
+            }
+        }
     }
 
 
+    protected void putNowFallToField(){
+        for (int i = 0; i < nowFall.FIGURE_FIELD_SIZE.y; i++) {
+            for (int j = 0; j < nowFall.FIGURE_FIELD_SIZE.x; j++) {
+                if (nowFall.figureField[i][j] == true){
+                    field[i + nowFall.position.y][j + nowFall.position.x] = true;
+                }
+            }
+        }
+    }
+
+    protected void createNewFigure(){   // T J L Z S I O
+        nowFall = new TetrisFigure(figureType[random.nextInt(7)]);
+    }
+
+    public void timeFall(){
+        nowFall.drop();
+        lastMove = 'f';
+    }
     public void inputDrop(){
         nowFall.drop();
         Log.d("myLog", nowFall.position.toString());

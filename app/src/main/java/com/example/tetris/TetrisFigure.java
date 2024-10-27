@@ -122,4 +122,17 @@ public class TetrisFigure {                 // T J L Z S I O
         //throw new Exception("?");
     }
 
+    public int lowestPos() {
+
+        for (int j = FIGURE_FIELD_SIZE.y - 1; j > 0; j--){
+            for (int i = 0; i < FIGURE_FIELD_SIZE.x; i++){
+                if (figureField[j][i]){
+                    return (j + position.y);
+                }
+            }
+        }
+        return -1;
+        //throw new Exception("?");
+    }
+
 }

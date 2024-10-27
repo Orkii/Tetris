@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         gameActivity = findViewById(R.id.mainFrame);
+        gameActivity.start();
     }
 
 
