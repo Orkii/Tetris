@@ -24,6 +24,7 @@ public class GameActivity extends View {
     private static final Paint BACKGROUND_COLOR = new Paint();
     private static final Paint INNER_BORDER_COLOR = new Paint();
     private static final Paint CELL_COLOR = new Paint();
+    private static final Paint END_TEXT_COLOR = new Paint();
     private static final Pair GAME_FIELD_SIZE = new Pair(10,20);
     private PairF GAME_SCREEN_SIZE = new PairF(-1,-1);
     private PairF CELL_SIZE = new PairF(-1,-1);
@@ -31,7 +32,7 @@ public class GameActivity extends View {
     private char[] figureType = new char[] {'T', 'J', 'L', 'Z', 'S', 'I', 'O'};
 
     private int msToFall = 200;
-
+    private boolean gameOver = false;
     private TetrisFigure nowFall;
 
     private char lastMove = '0';    // qe - вращение
@@ -90,7 +91,8 @@ public class GameActivity extends View {
         BACKGROUND_COLOR.setColor(Color.WHITE);
         INNER_BORDER_COLOR.setColor(Color.GRAY);
         CELL_COLOR.setColor(Color.GREEN);
-
+        END_TEXT_COLOR.setColor(Color.RED);
+        END_TEXT_COLOR.setTextSize(100);
         nowFall = new TetrisFigure('T');
     }
 
@@ -111,14 +113,20 @@ public class GameActivity extends View {
         drawBorder(canvas);
         drawCell(canvas);
         drawLines(canvas);
+        if (gameOver){
+            drawGameOver(canvas);
+        }
         Log.d("myLog", "HERE2");
     }
 
 
     void tick(){
-        nowFall.drop();
-        lastMove = 'f';
-        checkCollision();
+
+        if (!gameOver) {
+            nowFall.drop();
+            lastMove = 'f';
+            checkCollision();
+        }
         invalidate();
         ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
         service.schedule(new Runnable() {
@@ -183,7 +191,17 @@ public class GameActivity extends View {
             nowFall.position.y--;
             putNowFallToField();
             checkLines();
+            checkGameOver();
             createNewFigure();
+        }
+    }
+
+    protected void checkGameOver(){
+        boolean end = false;
+        for (int j = 0; j < GAME_FIELD_SIZE.x; j++) {
+            if (field[0][j]){
+                gameOver = true;
+            }
         }
     }
 
@@ -216,7 +234,13 @@ public class GameActivity extends View {
         for (int i = 0; i < nowFall.FIGURE_FIELD_SIZE.y; i++) {
             for (int j = 0; j < nowFall.FIGURE_FIELD_SIZE.x; j++) {
                 if (nowFall.figureField[i][j] == true){
-                    field[i + nowFall.position.y][j + nowFall.position.x] = true;
+                    if (i + nowFall.position.y >= 0) {
+                        field[i + nowFall.position.y][j + nowFall.position.x] = true;
+                    }
+                    else{
+                        gameOver = true;
+                        return;
+                    }
                 }
             }
         }
@@ -231,26 +255,33 @@ public class GameActivity extends View {
         lastMove = 'f';
     }
     public void inputDrop(){
-        nowFall.drop();
+        if (gameOver) return;
+        while(checkCollision()) {
+            nowFall.drop();
+        }
         Log.d("myLog", nowFall.position.toString());
         checkCollision();
     }
     public void inputRotateR(){
+        if (gameOver) return;
         lastMove = 'e';
         nowFall.rotateR();
         checkCollision();
     }
     public void inputRotateL(){
+        if (gameOver) return;
         lastMove = 'q';
         nowFall.rotateL();
         checkCollision();
     }
     public void inputMoveR(){
+        if (gameOver) return;
         lastMove = 'd';
         nowFall.moveR();
         checkCollision();
     }
     public void inputMoveL(){
+        if (gameOver) return;
         lastMove = 'a';
         nowFall.moveL();
         checkCollision();
@@ -324,4 +355,8 @@ public class GameActivity extends View {
         }
 
     }
+    protected void drawGameOver(@NonNull Canvas canvas){
+        canvas.drawText("ЦЕНОК", 200, 200, END_TEXT_COLOR);
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.example.tetris;
 
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,9 +28,14 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        setRequestedOrientation(SCREEN_ORIENTATION_PORTRAIT);
+
         gameActivity = findViewById(R.id.mainFrame);
         gameActivity.start();
     }
+
+
+
 
 
     public void onClick(View v) {
