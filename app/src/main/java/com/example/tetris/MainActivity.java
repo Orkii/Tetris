@@ -31,9 +31,15 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(SCREEN_ORIENTATION_PORTRAIT);
 
         gameActivity = findViewById(R.id.mainFrame);
-        gameActivity.start();
-    }
 
+
+        Thread thread = new Thread(){
+            public void run(){
+                gameActivity.start();
+            }
+        };
+        thread.start();
+    }
 
 
 

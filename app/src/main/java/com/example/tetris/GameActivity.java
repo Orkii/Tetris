@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,9 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -30,6 +34,7 @@ public class GameActivity extends View {
     private PairF CELL_SIZE = new PairF(-1,-1);
 
     private char[] figureType = new char[] {'T', 'J', 'L', 'Z', 'S', 'I', 'O'};
+    private ArrayList<Character> figureList;
 
     private int msToFall = 200;
     private boolean gameOver = false;
@@ -93,9 +98,16 @@ public class GameActivity extends View {
         CELL_COLOR.setColor(Color.GREEN);
         END_TEXT_COLOR.setColor(Color.RED);
         END_TEXT_COLOR.setTextSize(100);
-        nowFall = new TetrisFigure('T');
+
+        createNewFigure();
     }
 
+    private void resetFigureList(){
+        figureList = new ArrayList<Character>();
+        for (int i = 0; i < figureType.length; i++){
+            figureList.add(figureType[i]);
+        }
+    }
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
@@ -116,7 +128,7 @@ public class GameActivity extends View {
         if (gameOver){
             drawGameOver(canvas);
         }
-        Log.d("myLog", "HERE2");
+        //Log.d("myLog", "HERE2");
     }
 
 
@@ -128,26 +140,13 @@ public class GameActivity extends View {
             checkCollision();
         }
         invalidate();
-        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        service.schedule(new Runnable() {
-            @Override
-            public void run() {
-                tick();
-            }
-        }, msToFall, TimeUnit.MILLISECONDS);
-        service.shutdown();
     }
 
     public void start(){
-        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        service.schedule(new Runnable() {
-            @Override
-            public void run() {
-                tick();
-            }
-        }, msToFall, TimeUnit.MILLISECONDS);
-        service.shutdown();
-
+        while (true) {
+            tick();
+            SystemClock.sleep(msToFall);
+        }
     }
 
 
@@ -172,6 +171,10 @@ public class GameActivity extends View {
 
         for (int i = 0; i < nowFall.FIGURE_FIELD_SIZE.y; i++) {
             for (int j = 0; j < nowFall.FIGURE_FIELD_SIZE.x; j++) {
+
+                if (i + nowFall.position.y < 0) continue;
+                if (j + nowFall.position.x < 0) continue;
+
                 if (nowFall.figureField[i][j] &&
                     field[i + nowFall.position.y][j + nowFall.position.x]){
                     unDo();
@@ -247,7 +250,10 @@ public class GameActivity extends View {
     }
 
     protected void createNewFigure(){   // T J L Z S I O
-        nowFall = new TetrisFigure(figureType[random.nextInt(7)]);
+        if ((figureList == null) || (figureList.size() == 0)) resetFigureList();
+        int ni = random.nextInt(figureList.size());
+        nowFall = new TetrisFigure(figureList.get(ni));
+        figureList.remove(ni);
     }
 
     public void timeFall(){
@@ -257,6 +263,7 @@ public class GameActivity extends View {
     public void inputDrop(){
         if (gameOver) return;
         while(checkCollision()) {
+            lastMove = 'f';
             nowFall.drop();
         }
         Log.d("myLog", nowFall.position.toString());
